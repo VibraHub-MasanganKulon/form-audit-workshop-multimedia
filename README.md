@@ -7,12 +7,12 @@ Aplikasi web berbasis single-page untuk melakukan audit konten digital secara te
 ## Panduan Penggunaan Langsung (User Guide)
 Gunakan bagian ini jika Anda hanya ingin menggunakan aplikasi untuk keperluan audit harian tanpa perlu mengedit kode.
 
-#### Cara Mengakses
+### Cara Mengakses
 1. Buka tautan resmi: https://form-audit-workshop-multimedia.vercel.app/
 2. Tidak perlu instalasi apa pun. Aplikasi berjalan sepenuhnya di browser Anda.
 3. Catatan Privasi: Semua data disimpan secara lokal di browser (LocalStorage). Data tidak dikirim ke server manapun. Jika Anda membersihkan cache/browser data, riwayat audit akan hilang permanen.
 
-#### Alur Kerja Audit
+### Alur Kerja Audit
 1. Mulai Konten Baru: Klik tombol + Konten baru. Isi identitas (Judul, Audiens, Tujuan, dll).
 2. Isi Tabel Unsur:
     - Ketik analisis pada kolom Bukti, Fungsi, dan Perbaikan.
@@ -23,7 +23,7 @@ Gunakan bagian ini jika Anda hanya ingin menggunakan aplikasi untuk keperluan au
     - Klik Preview & export konten ini untuk melihat hasil sebelum diunduh.
     - Di jendela Preview, pilih Unduh Word (.doc) untuk laporan teks, atau Cetak / simpan PDF untuk laporan bergambar rapi format A4.
 
-#### Tips Penggunaan
+### Tips Penggunaan
 - Hindari mengunggah gambar resolusi sangat tinggi (4K/RAW) karena kapasitas penyimpanan browser terbatas (~5-10MB). Gunakan screenshot yang sudah di-crop atau dikompresi agar bisa menyimpan lebih banyak entri.
 - Fitur paste gambar bekerja paling baik di browser Chrome/Edge/Firefox versi terbaru.
 
