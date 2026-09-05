@@ -1,54 +1,70 @@
-# Audit Konten Digital
+## Audit Konten Digital - Panduan Penggunaan & Kontribusi
 
-## Struktur
+Aplikasi web berbasis single-page untuk melakukan audit konten digital secara terstruktur. Alat ini membantu evaluator mengevaluasi unsur-unsur konten (Teks, Visual, Audio, Gerak, Interaksi) serta menyimpan bukti visual langsung dari clipboard atau unggahan file.
 
+🔗 Akses Aplikasi Langsung: https://form-audit-workshop-multimedia.vercel.app/
+
+#### Panduan Penggunaan Langsung (User Guide)
+Gunakan bagian ini jika Anda hanya ingin menggunakan aplikasi untuk keperluan audit harian tanpa perlu mengedit kode.
+
+##### Cara Mengakses
+1. Buka tautan resmi: https://form-audit-workshop-multimedia.vercel.app/
+2. Tidak perlu instalasi apa pun. Aplikasi berjalan sepenuhnya di browser Anda.
+3. Catatan Privasi: Semua data disimpan secara lokal di browser (LocalStorage). Data tidak dikirim ke server manapun. Jika Anda membersihkan cache/browser data, riwayat audit akan hilang permanen.
+
+##### Alur Kerja Audit
+1. Mulai Konten Baru: Klik tombol + Konten baru. Isi identitas (Judul, Audiens, Tujuan, dll).
+2. Isi Tabel Unsur:
+    - Ketik analisis pada kolom Bukti, Fungsi, dan Perbaikan.
+    - Paste Screenshot: Cukup tekan Ctrl+V (atau Cmd+V) saat kursor berada di kolom "Bukti". Gambar akan otomatis muncul di preview.
+    - Upload Manual: Klik tombol 📷 Upload Gambar jika ingin mengambil file dari komputer.
+3. Simpan Data: Klik tombol Simpan. Data tersimpan otomatis di memori browser.
+4. Ekspor Dokumen:
+    - Klik Preview & export konten ini untuk melihat hasil sebelum diunduh.
+    - Di jendela Preview, pilih Unduh Word (.doc) untuk laporan teks, atau Cetak / simpan PDF untuk laporan bergambar rapi format A4.
+
+##### Tips Penggunaan
+- Hindari mengunggah gambar resolusi sangat tinggi (4K/RAW) karena kapasitas penyimpanan browser terbatas (~5-10MB). Gunakan screenshot yang sudah di-crop atau dikompresi agar bisa menyimpan lebih banyak entri.
+- Fitur paste gambar bekerja paling baik di browser Chrome/Edge/Firefox versi terbaru.
+
+### Dokumentasi Kontribusi (Developer Guide)
+Gunakan bagian ini jika Anda ingin mengembangkan fitur baru, memperbaiki bug, atau menyesuaikan struktur data audit. Source code tersedia di repository ini.
+
+#### Struktur Proyek
+Proyek ini menggunakan arsitektur vanilla JS modular tanpa bundler. Urutan pemuatan script di `index.html` sangat kritis:
+
+```bash
+assets/js/
+├── config.js      # Konstanta, tipe data, helper escapeHtml
+├── storage.js     # Logika persistensi data (window.storage / localStorage)
+├── ui.js          # Render DOM, event listener tabel, form handling, toast/modal
+├── actions.js     # Business logic (save, delete, select entry, validation)
+├── export.js      # Generator HTML dokumen, preview modal, download handler
+└── main.js        # Inisialisasi awal & binding event listener global
 ```
-audit-konten/
-├── index.html              markup saja
-└── assets/
-    ├── css/
-    │   └── style.css       semua styling
-    └── js/
-        ├── config.js       konstanta: daftar unsur, kriteria, bentuk data kosong
-        ├── storage.js      baca/tulis ke window.storage
-        ├── ui.js           render form, daftar konten, toast, modal
-        ├── actions.js       logika: pilih/buat/simpan/hapus entri
-        ├── export.js       preview dokumen di modal → unduh Word (.doc) / cetak-PDF
-        └── main.js         pasang event listener + jalankan saat load
-```
 
-Urutan `<script>` di `index.html` sengaja berurutan (config → storage → ui →
-actions → export → main) karena semua pakai variabel/fungsi global biasa,
-bukan ES module — supaya tetap jalan kalau file dibuka langsung dari disk
-(`file://`), tanpa perlu server.
+#### Menambah Unsur Audit Baru
+Jika ingin menambah kategori unsur (misal: "Narasi Suara"):
+1. Buka `config.js.`
+2. Tambahkan objek baru ke array `UNSUR_KEYS: { key: 'narasi', label: 'Narasi Suara' }`.
+3. Sistem akan otomatis merender baris tabel, input field, dan logika penyimpanan untuk unsur tersebut tanpa perlu mengubah file lain.
 
-## Kalau mau nambah/kurangi fitur
+#### Modifikasi Format Ekspor
+- Ubah Tampilan Dokumen: Edit fungsi  `entryToHtmlBlock()` di `export.js`. Semua template HTML untuk Word/PDF ada di sana.
+- Ganti Library PDF: Saat ini menggunakan `html2pdf.js`. Jika ingin migrasi ke `jspdf` native atau server-side generation, cukup ubah implementasi `printFromPreview()`.
 
-- **Tambah kolom identitas konten** (mis. "Nama pengaudit"): tambah `<input>`
-  di `index.html`, tambah field di `emptyEntry()` (config.js), tambah baris
-  di `fillForm()` & `readFormAsEntry()` (ui.js), tambah baris tabel di
-  `entryToHtmlBlock()` (export.js).
-- **Tambah/kurangi unsur** (Teks/Visual/Audio/dst): cukup ubah array
-  `UNSUR_KEYS` di `config.js` — tabel, preview, dan export mengikuti otomatis.
-- **Ubah tampilan preview atau isi dokumen export**: cukup ubah
-  `entryToHtmlBlock()` di `export.js` — dipakai bareng oleh preview,
-  unduh Word, dan cetak/PDF, jadi cukup diubah satu tempat.
-- **Ganti cara export** (mis. ke docx asli, atau kirim ke API): cukup ubah
-  `export.js`, modul lain tidak perlu disentuh.
+#### Manajemen State & Variabel Global
+Karena tidak menggunakan module system (ESM/CommonJS), variabel state bersifat global:
+- `currentId`: ID entri yang sedang aktif di form.
+- `entries`: Array utama penyimpan semua data audit.
+- `baselineSnapshot`: JSON string untuk mendeteksi perubahan belum tersimpan (dirty state).
 
-## Keterbatasan penting
+⚠️ Perhatian: Saat menambahkan variabel state baru di `ui.js`, pastikan mendeklarasikannya dengan `var` (bukan `let/const`) agar dapat diakses lintas file script secara global.
 
-`window.storage` adalah API penyimpanan milik lingkungan Claude (artifact),
-bukan `localStorage` browser biasa — sengaja dipakai karena `localStorage`
-diblokir di sandbox Claude. Konsekuensinya:
+#### Debugging Umum
+- Gambar Tidak Muncul: Cek Console Browser. Error `Unsafe attempt to load URL` berarti Anda membuka via `file://`. Wajib pakai Local Server atau akses via URL deployment Vercel.
+- Tombol Simpan Null: Pastikan `currentId` terisi. Variabel ini hanya berubah saat memanggil `startNewEntry()` atau `loadEntryIntoForm()`.
+- Toast Tertutup Modal: Toast memiliki `z-index: 9999` dinamis. Jika masih tertutup, cek apakah ada elemen lain yang menggunakan `z-index > 9999` di CSS custom Anda.
 
-- Selama file ini dibuka **lewat Claude** (artifact/preview), data tersimpan
-  per akun Claude kamu dan tetap ada lain waktu.
-- Kalau file ini diambil lalu dibuka **langsung dari disk atau dihosting
-  sendiri** (di luar Claude), `window.storage` tidak tersedia — form akan
-  tetap bisa diisi, tapi tombol Simpan akan gagal.
-- Kalau tujuan akhirnya memang untuk dipakai mandiri di luar Claude (mis.
-  di-hosting di server kampus), `storage.js` perlu diganti ke
-  `localStorage` biasa (tinggal ganti isi `loadEntries()`/`persistEntries()`
-  — struktur file lain tidak perlu berubah, ini alasan kenapa dipisah).
-# form-audit-workshop-multimedia
+#### Lisensi & Atribusi
+Proyek ini dikembangkan untuk kebutuhan Workshop Literasi Multimedia. Silakan modifikasi dan distribusikan sesuai kebutuhan institusi.
