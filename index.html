@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Konten Digital</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" type="image/png" href="./assets/img/logo-pens-no-bg.png">
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="topbar">
+    <h1>Format Audit Konten yang Dikumpulkan</h1>
+    <p>Gunakan istilah yang sama: audiens, tujuan, pesan, unsur, format, platform, rekomendasi.</p>
+  </div>
+  <div class="rule"></div>
+
+  <div class="flow" id="flowHint">
+    <strong>Alur pengisian yang disarankan</strong>
+    <ol>
+      <li>Klik <em>Konten Baru</em>, isi identitas konten (judul/tautan, audiens, tujuan, dst).</li>
+      <li>Isi tabel unsur — cukup baris yang relevan dengan konten (kosongkan yang tidak ada).</li>
+      <li>Klik <em>Simpan</em>. Konten tersimpan di daftar sebelah kiri, tersimpan otomatis di penyimpanan lokal akun ini.</li>
+      <li>Ulangi untuk konten berikutnya. Kapan pun, klik <em>Preview & export</em> untuk melihat tampilan dokumen dulu sebelum diunduh atau dicetak.</li>
+    </ol>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-primary" id="btnNew">+ Konten baru</button>
+    <input type="text" id="searchBox" placeholder="Cari judul atau audiens…">
+    <button class="btn btn-outline" id="btnPreviewAll">Preview & export semua</button>
+  </div>
+
+  <div class="grid">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <h2>KONTEN TERSIMPAN (<span id="countEntries">0</span>)</h2>
+      <div class="entry-list" id="entryList"></div>
+    </div>
+
+    <!-- MAIN FORM -->
+    <div class="main">
+      <div class="card">
+        <h3>Identitas konten <span class="dirty-dot" id="dirtyDot" style="display:none" title="Ada perubahan belum disimpan"></span></h3>
+        <div class="row2">
+          <div class="field" id="f-judul">
+            <label>Judul / tautan</label>
+            <input type="text" id="judul" placeholder="mis. Reels Instagram — Tips Belajar Efektif">
+            <div class="err">Judul / tautan wajib diisi.</div>
+          </div>
+          <div class="field">
+            <label>Audiens</label>
+            <input type="text" id="audiens" placeholder="mis. Mahasiswa baru semester 1">
+          </div>
+          <div class="field">
+            <label>Tujuan</label>
+            <input type="text" id="tujuan" placeholder="mis. Meningkatkan minat baca">
+          </div>
+          <div class="field">
+            <label>Pesan utama</label>
+            <input type="text" id="pesan" placeholder="mis. Membaca 15 menit sehari cukup">
+          </div>
+          <div class="field">
+            <label>Format</label>
+            <input type="text" id="format" placeholder="mis. Vertikal/horizontal">
+          </div>
+          <div class="field">
+            <label>Platform</label>
+            <input type="text" id="platform" placeholder="mis. Instagram / TikTok">
+          </div>
+        </div>
+        <div class="field">
+          <label>Rekomendasi utama</label>
+          <textarea id="rekomendasi" placeholder="Ringkasan rekomendasi perbaikan paling penting untuk konten ini"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Unsur konten</h3>
+        <table class="unsur">
+          <thead>
+            <tr><th style="width:90px">Unsur</th><th>Bukti pada konten</th><th>Fungsi</th><th>Perbaikan</th></tr>
+          </thead>
+          <tbody id="unsurBody"></tbody>
+        </table>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" id="btnSave">Simpan</button>
+        <button class="btn btn-outline" id="btnPreviewOne">Preview & export konten ini</button>
+        <button class="btn btn-danger" id="btnDeleteOne">Hapus konten ini</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <p id="modalMsg"></p>
+    <div class="btns" id="modalBtns"></div>
+  </div>
+</div>
+
+<div id="print-area"></div>
+
+<div class="preview-bg" id="previewBg">
+  <div class="preview-box">
+    <div class="preview-header">
+      <h3 id="previewTitle">Preview</h3>
+      <button class="btn btn-ghost btn-sm" id="previewClose">✕ Tutup</button>
+    </div>
+    <div class="preview-content" id="previewContent"></div>
+    <div class="preview-footer">
+      <button class="btn btn-primary" id="previewDownload">Unduh Word (.doc)</button>
+      <button class="btn btn-outline" id="previewPrint">Cetak / simpan PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Urutan load penting: config → storage/ui/actions/export → main -->
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/storage.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/actions.js"></script>
+<script src="assets/js/export.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
